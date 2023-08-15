@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package user.service.v1;
+
+// import "google/api/annotations.proto";
+
+option go_package = "api/user/service/v1;v1";
+
+service User{
+    rpc GetUser(GetUserReq)returns(GetUserReply){}
+}
+
+
+message GetUserReq{
+    int64 id = 1;
+}
+message GetUserReply{
+    int64 id = 1;
+    string username = 2;
+}
