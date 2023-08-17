@@ -12,4 +12,6 @@ enum UserServiceErrorReason {
     UNKNOWN_ERROR = 0;
     LOGIN_FAILED = 1;
     REGISTER_FAILED = 2;
+    NOT_FOUND_ERROR = 3;
 }
+

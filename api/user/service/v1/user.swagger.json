@@ -50,12 +50,48 @@
       "properties": {
         "id": {
           "type": "string",
-          "format": "int64"
+          "format": "uint64"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
         },
         "username": {
           "type": "string"
+        },
+        "UserStatus": {
+          "$ref": "#/definitions/v1UserStatus"
         }
       }
+    },
+    "v1LoginReply": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "type": "boolean"
+        }
+      }
+    },
+    "v1RegisterReply": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uint64"
+        }
+      }
+    },
+    "v1UserStatus": {
+      "type": "string",
+      "enum": [
+        "UNKNOWN",
+        "NORMAL",
+        "FREEZE",
+        "DISABLE"
+      ],
+      "default": "UNKNOWN"
     }
   }
 }

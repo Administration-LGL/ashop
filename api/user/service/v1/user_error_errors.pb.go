@@ -46,3 +46,15 @@ func IsRegisterFailed(err error) bool {
 func ErrorRegisterFailed(format string, args ...interface{}) *errors.Error {
 	return errors.New(500, UserServiceErrorReason_REGISTER_FAILED.String(), fmt.Sprintf(format, args...))
 }
+
+func IsNotFoundError(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == UserServiceErrorReason_NOT_FOUND_ERROR.String() && e.Code == 500
+}
+
+func ErrorNotFoundError(format string, args ...interface{}) *errors.Error {
+	return errors.New(500, UserServiceErrorReason_NOT_FOUND_ERROR.String(), fmt.Sprintf(format, args...))
+}
