@@ -47,8 +47,22 @@ func (us *UserService) GetUser(ctx context.Context, req *v1.GetUserReq) (*v1.Get
 
 func (us *UserService) Login(ctx context.Context, req *v1.LoginReq) (*v1.LoginReply, error) {
 	result, err := us.uc.Login(ctx, req.Phone, req.Password)
+	if err != nil {
+		return nil, err
+	}
 
 	return &v1.LoginReply{
-		Result: result,
-	}, err
+		Result:  result.Result,
+		Message: result.Message,
+	}, nil
+}
+func (us *UserService) SetUserStatusByID(ctx context.Context, req *v1.SetUserStatusByIDReq) (*v1.SetUserStatusReply, error) {
+	result, err := us.uc.SetUserStatus(ctx, req.Id, req.Status)
+	if err != nil {
+		return nil, err
+	}
+	return &v1.SetUserStatusReply{
+		Result:  result.Result,
+		Message: result.Message,
+	}, nil
 }

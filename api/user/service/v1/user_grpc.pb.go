@@ -8,6 +8,7 @@ package v1
 
 import (
 	context "context"
+	empty "github.com/golang/protobuf/ptypes/empty"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -19,9 +20,11 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	User_GetUser_FullMethodName  = "/user.service.v1.User/GetUser"
-	User_Register_FullMethodName = "/user.service.v1.User/Register"
-	User_Login_FullMethodName    = "/user.service.v1.User/Login"
+	User_GetUser_FullMethodName           = "/user.service.v1.User/GetUser"
+	User_Register_FullMethodName          = "/user.service.v1.User/Register"
+	User_Login_FullMethodName             = "/user.service.v1.User/Login"
+	User_SetUserStatusByID_FullMethodName = "/user.service.v1.User/SetUserStatusByID"
+	User_Healthy_FullMethodName           = "/user.service.v1.User/Healthy"
 )
 
 // UserClient is the client API for User service.
@@ -31,6 +34,8 @@ type UserClient interface {
 	GetUser(ctx context.Context, in *GetUserReq, opts ...grpc.CallOption) (*GetUserReply, error)
 	Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterReply, error)
 	Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginReply, error)
+	SetUserStatusByID(ctx context.Context, in *SetUserStatusByIDReq, opts ...grpc.CallOption) (*SetUserStatusReply, error)
+	Healthy(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error)
 }
 
 type userClient struct {
@@ -68,6 +73,24 @@ func (c *userClient) Login(ctx context.Context, in *LoginReq, opts ...grpc.CallO
 	return out, nil
 }
 
+func (c *userClient) SetUserStatusByID(ctx context.Context, in *SetUserStatusByIDReq, opts ...grpc.CallOption) (*SetUserStatusReply, error) {
+	out := new(SetUserStatusReply)
+	err := c.cc.Invoke(ctx, User_SetUserStatusByID_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userClient) Healthy(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, User_Healthy_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServer is the server API for User service.
 // All implementations must embed UnimplementedUserServer
 // for forward compatibility
@@ -75,6 +98,8 @@ type UserServer interface {
 	GetUser(context.Context, *GetUserReq) (*GetUserReply, error)
 	Register(context.Context, *RegisterReq) (*RegisterReply, error)
 	Login(context.Context, *LoginReq) (*LoginReply, error)
+	SetUserStatusByID(context.Context, *SetUserStatusByIDReq) (*SetUserStatusReply, error)
+	Healthy(context.Context, *empty.Empty) (*empty.Empty, error)
 	mustEmbedUnimplementedUserServer()
 }
 
@@ -90,6 +115,12 @@ func (UnimplementedUserServer) Register(context.Context, *RegisterReq) (*Registe
 }
 func (UnimplementedUserServer) Login(context.Context, *LoginReq) (*LoginReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
+}
+func (UnimplementedUserServer) SetUserStatusByID(context.Context, *SetUserStatusByIDReq) (*SetUserStatusReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetUserStatusByID not implemented")
+}
+func (UnimplementedUserServer) Healthy(context.Context, *empty.Empty) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Healthy not implemented")
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
 
@@ -158,6 +189,42 @@ func _User_Login_Handler(srv interface{}, ctx context.Context, dec func(interfac
 	return interceptor(ctx, in, info, handler)
 }
 
+func _User_SetUserStatusByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetUserStatusByIDReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).SetUserStatusByID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_SetUserStatusByID_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).SetUserStatusByID(ctx, req.(*SetUserStatusByIDReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _User_Healthy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).Healthy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_Healthy_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).Healthy(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // User_ServiceDesc is the grpc.ServiceDesc for User service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -176,6 +243,14 @@ var User_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Login",
 			Handler:    _User_Login_Handler,
+		},
+		{
+			MethodName: "SetUserStatusByID",
+			Handler:    _User_SetUserStatusByID_Handler,
+		},
+		{
+			MethodName: "Healthy",
+			Handler:    _User_Healthy_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

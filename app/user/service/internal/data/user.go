@@ -28,7 +28,6 @@ func NewUserRepo(data *Data, logger log.Logger) biz.UserRepo {
 }
 
 func (ur *userRepo) CreateUser(ctx context.Context, bizuser *biz.User) (*biz.User, error) {
-
 	pwdhs, err := util.PasswordToHash(bizuser.Password)
 	if err != nil {
 		return nil, err
@@ -126,5 +125,36 @@ func (ur *userRepo) GetUserForAuth(ctx context.Context, phone string) (*biz.User
 		Phone:        user.Phone,
 		PasswordHash: user.PasswordHash,
 		Status:       v1.UserStatus(user.Status),
+	}, nil
+}
+
+func (ur *userRepo) UpdateUser(ctx context.Context, id uint64, bizUser *biz.User) (*biz.User, error) {
+	uuo := ur.data.db.User.UpdateOneID(id)
+	if len(bizUser.Email) != 0 {
+		uuo = uuo.SetEmail(bizUser.Email)
+	}
+	if len(bizUser.Username) != 0 {
+		uuo = uuo.SetUsername(bizUser.Username)
+	}
+	if len(bizUser.Password) != 0 {
+		pwdhs, err := util.PasswordToHash(bizUser.Password)
+		if err != nil {
+			return nil, err
+		}
+		uuo = uuo.SetPasswordHash(pwdhs)
+	}
+	if bizUser.Status != v1.UserStatus_UNKNOWN  {
+		uuo = uuo.SetStatus(int8(bizUser.Status))
+	}
+	user, err := uuo.Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &biz.User{
+		ID:       user.ID,
+		Email:    user.Email,
+		Phone:    user.Phone,
+		Username: user.Username,
+		Status:   v1.UserStatus(user.Status),
 	}, nil
 }

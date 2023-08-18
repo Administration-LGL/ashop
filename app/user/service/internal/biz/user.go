@@ -2,6 +2,7 @@ package biz
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -41,6 +42,8 @@ type UserRepo interface {
 	CreateUser(ctx context.Context, user *User) (*User, error)
 	GetUser(ctx context.Context, user *User) (*User, error)
 	GetUserForAuth(ctx context.Context, phone string) (*UserForAuth, error)
+	// SetUserStatus(ctx context.Context, id uint64, status v1.UserStatus) (bool, error)
+	UpdateUser(ctx context.Context, id uint64, user *User) (*User, error)
 }
 
 // UserUsecase is a Greeter usecase.
@@ -99,15 +102,51 @@ func (uc *UserUsecase) Register(ctx context.Context, user *User) (*User, error) 
 	return user, nil
 }
 
-func (uc *UserUsecase) Login(ctx context.Context, phone, password string) (bool, error) {
+type Result struct {
+	Result  bool
+	Message string
+}
+
+func (uc *UserUsecase) Login(ctx context.Context, phone, password string) (*Result, error) {
+	res := &Result{Result: false}
 	user, err := uc.ur.GetUserForAuth(ctx, phone)
 	if err != nil {
-		return false, errors.New(http.StatusInternalServerError, "body", err.Error())
+		return nil, errors.New(http.StatusInternalServerError, "body", err.Error())
 	}
 	if user.Status == v1.UserStatus_FREEZE {
 		// 账号冻结
-		return false, errors.New(http.StatusInternalServerError, "body", "user is freezed")
+		res.Message = fmt.Sprintf("the user who's phone is %s has been freezed", phone)
+		return res, nil
 	}
 	// 验证密码正确性
-	return util.VertifyPasswordHash(user.PasswordHash, password), nil
+	if !util.VertifyPasswordHash(user.PasswordHash, password) {
+		res.Message = fmt.Sprintf("账号或密码错误")
+		return res, nil
+	}
+	res.Result = true
+	return res, nil
+}
+
+func (uc *UserUsecase) SetUserStatus(ctx context.Context, id uint64, status v1.UserStatus) (*Result, error) {
+	res := &Result{Result: false}
+	if status == v1.UserStatus_UNKNOWN {
+		res.Message = fmt.Sprintf("can't set status:%v", status)
+		return res, nil
+	}
+	// if user's status equal status return false
+	user, err := uc.ur.GetUser(ctx, &User{ID: id})
+	if err != nil {
+		return nil, errors.New(http.StatusInternalServerError, "body", err.Error())
+	}
+	if user.Status == status {
+		res.Message = fmt.Sprintf("the user's status is %v,set false", user.Status)
+		return res, nil
+	}
+	// set status
+	_, err = uc.ur.UpdateUser(ctx, id, &User{Status: status})
+	if err != nil {
+		return nil, errors.New(http.StatusInternalServerError, "update error", err.Error())
+	}
+	res.Result = true
+	return res, nil
 }

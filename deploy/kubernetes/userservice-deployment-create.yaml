@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-deployment
+spec:
+  selector:
+    matchLabels:
+      app: user
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: user
+    spec:
+      containers:
+        - image: go-kratos/ashop-user-service:0.1.0
+          name: userpod
+          resources: {}
+          ports: 
+            - containerPort: 8000
+            - containerPort: 9000
+      hostname: user-service
+      restartPolicy: Always
+status: {}
