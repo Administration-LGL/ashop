@@ -13,7 +13,7 @@ spec:
         app: user
     spec:
       containers:
-        - image: go-kratos/ashop-user-service:0.1.0
+        - image: rickkkkk9873/ashop-user-service:0.1.0
           name: userpod
           resources: {}
           ports: 
