@@ -43,7 +43,7 @@ func NewEntClient(conf *conf.Data, logger log.Logger) *ent.Client {
 	client, err := ent.Open(
 		conf.Database.Driver,
 		conf.Database.Source,
-		ent.Debug(),
+		// ent.Debug(),
 	)
 	if err != nil {
 		log.Fatalf("failed opening connection to db: %v", err)

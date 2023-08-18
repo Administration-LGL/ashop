@@ -11,8 +11,7 @@ FROM debian:stable-slim
 
 ARG APP_RELATIVE_PATH
 
-COPY --from=builder /src/app/${APP_RELATIVE_PATH}/bin  /app
-COPY ./configs /app
+COPY --from=builder /src/app/${APP_RELATIVE_PATH}/bin /src/app/${APP_RELATIVE_PATH}/configs /app/
 
 WORKDIR /app
 
