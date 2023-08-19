@@ -36,7 +36,7 @@ func (ur *userRepo) CreateUser(ctx context.Context, bizuser *biz.User) (*biz.Use
 		SetEmail(bizuser.Email).
 		SetUsername(bizuser.Username).
 		SetPhone(bizuser.Phone).
-		SetID(uint64(snowflakegen.GenID())).
+		SetID(snowflakegen.GenID().Int64()).
 		SetPasswordHash(pwdhs).Save(ctx)
 	if err != nil {
 		return nil, err
@@ -128,7 +128,7 @@ func (ur *userRepo) GetUserForAuth(ctx context.Context, phone string) (*biz.User
 	}, nil
 }
 
-func (ur *userRepo) UpdateUser(ctx context.Context, id uint64, bizUser *biz.User) (*biz.User, error) {
+func (ur *userRepo) UpdateUser(ctx context.Context, id int64, bizUser *biz.User) (*biz.User, error) {
 	uuo := ur.data.db.User.UpdateOneID(id)
 	if len(bizUser.Email) != 0 {
 		uuo = uuo.SetEmail(bizUser.Email)
@@ -143,7 +143,7 @@ func (ur *userRepo) UpdateUser(ctx context.Context, id uint64, bizUser *biz.User
 		}
 		uuo = uuo.SetPasswordHash(pwdhs)
 	}
-	if bizUser.Status != v1.UserStatus_UNKNOWN  {
+	if bizUser.Status != v1.UserStatus_UNKNOWN {
 		uuo = uuo.SetStatus(int8(bizUser.Status))
 	}
 	user, err := uuo.Save(ctx)

@@ -23,7 +23,7 @@ var (
 
 // Greeter is a Greeter model.
 type User struct {
-	ID       uint64
+	ID       int64
 	Username string
 	Phone    string
 	Email    string
@@ -31,7 +31,7 @@ type User struct {
 	Status   v1.UserStatus
 }
 type UserForAuth struct {
-	ID           uint64
+	ID           int64
 	Phone        string
 	PasswordHash string
 	Status       v1.UserStatus
@@ -42,8 +42,7 @@ type UserRepo interface {
 	CreateUser(ctx context.Context, user *User) (*User, error)
 	GetUser(ctx context.Context, user *User) (*User, error)
 	GetUserForAuth(ctx context.Context, phone string) (*UserForAuth, error)
-	// SetUserStatus(ctx context.Context, id uint64, status v1.UserStatus) (bool, error)
-	UpdateUser(ctx context.Context, id uint64, user *User) (*User, error)
+	UpdateUser(ctx context.Context, id int64, user *User) (*User, error)
 }
 
 // UserUsecase is a Greeter usecase.
@@ -127,7 +126,7 @@ func (uc *UserUsecase) Login(ctx context.Context, phone, password string) (*Resu
 	return res, nil
 }
 
-func (uc *UserUsecase) SetUserStatus(ctx context.Context, id uint64, status v1.UserStatus) (*Result, error) {
+func (uc *UserUsecase) SetUserStatus(ctx context.Context, id int64, status v1.UserStatus) (*Result, error) {
 	res := &Result{Result: false}
 	if status == v1.UserStatus_UNKNOWN {
 		res.Message = fmt.Sprintf("can't set status:%v", status)

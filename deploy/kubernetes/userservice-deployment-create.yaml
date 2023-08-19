@@ -12,6 +12,10 @@ spec:
       labels:
         app: user
     spec:
+      volumes:
+        - name: config-volume
+          configMap:
+            name: my-configmap
       containers:
         - image: rickkkkk9873/ashop-user-service:0.1.0
           name: userpod

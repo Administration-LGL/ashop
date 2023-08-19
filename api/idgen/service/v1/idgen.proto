@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package idgen.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+option go_package = "api/idgen/service/v1;v1";
+
+service IdGen{
+    // 
+    rpc GenerateID (google.protobuf.Empty) returns (GenIDReply) {}
+
+    rpc GenerateIDs (GenIDsReq) returns (GenIDsReply) {}
+}
+
+
+message GenIDReply{
+    int64 id = 1;
+}
+
+message GenIDsReq{
+    int64 count = 1;
+}
+
+message GenIDsReply{
+    repeated int64 ids = 1;
+}

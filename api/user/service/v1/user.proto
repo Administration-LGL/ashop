@@ -21,7 +21,7 @@ service User{
 }
 
 message SetUserStatusByIDReq{
-    uint64 id = 1;
+    int64 id = 1;
     UserStatus status = 2;
 }
 
@@ -31,13 +31,13 @@ message SetUserStatusReply{
 }
 
 message GetUserReq{
-    uint64 id = 1;
+    int64 id = 1;
     string phone = 2;
     string email = 3;
     string username = 4;
 }
 message GetUserReply{
-    uint64 id = 1;
+    int64 id = 1;
     string phone = 2;
     string email = 3;
     string username = 4;
@@ -52,7 +52,7 @@ message RegisterReq{
 
 }
 message RegisterReply{
-    uint64 id = 1;
+    int64 id = 1;
 }
 
 message LoginReq{

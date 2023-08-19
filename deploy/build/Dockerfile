@@ -11,7 +11,7 @@ FROM debian:stable-slim
 
 ARG APP_RELATIVE_PATH
 
-COPY --from=builder /src/app/${APP_RELATIVE_PATH}/bin /src/app/${APP_RELATIVE_PATH}/configs /app/
+COPY --from=builder /src/app/${APP_RELATIVE_PATH}/bin /app
 
 WORKDIR /app
 
@@ -19,4 +19,4 @@ EXPOSE 8000
 EXPOSE 9000
 VOLUME /data/conf
 
-CMD ["./server", "-conf", "."]
+CMD ["./server", "-conf", "/data/conf"]

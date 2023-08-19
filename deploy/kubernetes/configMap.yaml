@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-configmap
+data:
+  server.yaml: |
+    server:
+      grpc:
+        addr: 0.0.0.0:9000
+        timeout: 1s
+  node.yaml: |
+    node:
+      id: 1

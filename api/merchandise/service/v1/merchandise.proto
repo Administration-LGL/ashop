@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package merchandise.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+option go_package = "api/user/service/v1;v1";
+
+enum UserStatus{
+    UNKNOWN = 0;
+    NORMAL = 1;
+    FREEZE = 2;
+    DEREGISTER = 3;
+}
